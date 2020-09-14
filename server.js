@@ -1,5 +1,5 @@
-const mysql = require("mysql");
-const inquirer = require("inquirer");
+var mysql = require("mysql");
+var inquirer = require("inquirer");
 const util = require("util");
 const cTable = require("console.table");
 require("dotenv").config();
@@ -15,11 +15,12 @@ const connection = mysql.createConnection({
 connection.connect((err) => {
   // connect to the mysql server and sql database
   if (err) throw err;
+  console.log("connected as id " + connection.threadId);
   // run the start function after the connection is made to prompt the user
   runSearchPrompt();
 });
 
-connection.query = util.promisify(connection.query);
+// connection.query = util.promisify(connection.query);
 
 function runSearchPrompt() {
   inquirer
@@ -98,42 +99,48 @@ const allEmployees = () => {
   }
 
   const addEmployee = () => {
-      connection.query("SELECT * FROM roles", (err, res) => {
-          if (err) throw err;
-          return inquirer.prompt([
-              {
-                  type: "input",
-                  name: "firstName",
-                  message: "Please enter employee's first name",
-                  validate: (answer) => {
-                    if (answer !== "") {
-                        return true;
-                      }
-                      return "No blank fields";
-                    }
-              },
-              {
+    connection.query("SELECT * FROM roles", (err, res) => {
+        if (err) throw err;
+        return inquirer.prompt([
+            {
                 type: "input",
-                name: "lastName",
-                message: "Please enter employee's last name",
+                name: "firstName",
+                message: "Please enter employee's first name",
                 validate: (answer) => {
                   if (answer !== "") {
                       return true;
                     }
                     return "No blank fields";
                   }
-              },  
-            {
-                type: "input",
-                name: "role",
-                message: "Please enter employee's department",
             },
-          ]).then(function (answer)  {
-              connection.query(`INSERT into employee (first_name, last_name, role_id) VALE ("${answer.firstName}", "${answer.lastName}", ${role_id}`) (err, res) 
+            {
+              type: "input",
+              name: "lastName",
+              message: "Please enter employee's last name",
+              validate: (answer) => {
+                if (answer !== "") {
+                    return true;
+                  }
+                  return "No blank fields";
+                }
+            },  
+            {
+                type: "role",
+                message: "What is the employee's role id number?",
+                name: "roleID"
+              },
+              {
+                type: "manager",
+                message: "What is the manager id number?",
+                name: "managerID"
+              }
+        ]).then(function (answer)  {
+            connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.eeFirstName, answer.eeLastName, answer.roleID, answer.managerID], function(err, res) {
                 if (err) throw err;
                 // Log all results of the SELECT statement
                 console.log(`${answer.firstName} ${answer.lastName}  has been added to the team!`);
             console.log("");
-          })
+            });
         });
-    }
+      });
+  }
