@@ -59,7 +59,7 @@ function runSearchPrompt() {
         case "Add department":
           addDepartment();
           break;
-        case "Add Role":
+        case "Add role":
           addRole();
           break;
         case "Update employee role":
@@ -182,11 +182,13 @@ const addDepartment = () => {
 const addRole = () => {
   connection.query("SELECT * FROM department", (err, res) => {
     if (err) throw err;
-    return inquirer.prompt([
+
+    return inquirer
+      .prompt([
         {
           type: "input",
           name: "role",
-          message: "Please name this new role:",
+          message: "Please enter a new role:",
         },
         {
           type: "input",
@@ -195,15 +197,27 @@ const addRole = () => {
         },
         {
           type: "list",
-          name: "departmentId",
+          name: "department",
           message: "What department will this role be in?",
+          choices: () => {
+            let departmentArray = [];
+            for (let i = 0; i < res.length; i++) {
+              departmentArray.push(res[i].dept_name + " | " + res[i].id);
+            }
+            return departmentArray;
+          },
         },
       ])
-      .then(function (answer) {
+      .then((choice) => {
+        let dept = choice.department.split("|")[1];
+
         connection.query(
-          "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",[answer.role, answer.salary, answer.departmentId],function (err, res) {
+          `INSERT into roles (title, department_id, salary) VALUES ("${choice.role}",${dept}, "${choice.salary}") `,
+
+          (err) => {
             if (err) throw err;
-            console.log(`You have successfully added "${answer.role}"`);
+            console.log(`You have added successfully the role "${choice.role}"`);
+            // RETURN TO START
             console.log("");
             runSearchPrompt();
           }
