@@ -30,13 +30,12 @@ function runSearchPrompt() {
         message: "what would you like to do?",
         choices: [
           "View all employees",
-          "View all employees by department",
-          "View all employees by manager",
+          "View all departments",
+          "View all roles",
           "Add employee",
-          "Add Department",
-          "Add Role",
-          "Remove employee",
-          "Update employee manager",
+          "Add department",
+          "Add role",
+          "Update employee role",
         ],
       },
     ])
@@ -47,11 +46,11 @@ function runSearchPrompt() {
         case "View all employees":
           allEmployees();
           break;
-        case "View all employees by department":
+        case "View all departments":
           viewByDepartment();
           break;
-        case "View all employees by manager":
-          viewByManager();
+        case "View all roles":
+          viewByRole();
           break;
         case "Add employee":
           addEmployee();
@@ -62,15 +61,38 @@ function runSearchPrompt() {
         case "Add Role":
           addRole();
           break;
-        case "Remove employee":
-          deleteEmployee();
-          break;
-        case "Update employee manager":
-          updateManager();
-          break;
         case "exit":
           connection.end();
           break;
       }
     });
 }
+
+const allEmployees = () => {
+    connection.query("SELECT * FROM employee", function (err, res) {
+      if (err) throw err;
+      console.table(res);
+      console.log("");
+      runSearchPrompt();
+    });
+  }
+
+  const viewByDepartment = () => {
+    connection.query("SELECT * FROM department", function (err, res) {
+      if (err) throw err;
+      // Log all results of the SELECT statement
+      console.table(res);
+      console.log("");
+      runSearchPrompt();
+    });
+  }
+
+  const viewByRole = () => {
+    connection.query("SELECT * FROM roles", function (err, res) {
+      if (err) throw err;
+      // Log all results of the SELECT statement
+      console.table(res);
+      console.log("");
+      runSearchPrompt();
+    });
+  }
