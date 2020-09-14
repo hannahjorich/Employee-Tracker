@@ -129,7 +129,7 @@ const allEmployees = () => {
                 message: "Please enter employee's department",
             },
           ]).then(function (answer)  {
-              connection.query(`INSERT into employee (first_name, last_name, role_id) VALE ("${answer.firstName}", "${answer.lastName}", ${roleID}`) (err, res) 
+              connection.query(`INSERT into employee (first_name, last_name, role_id) VALE ("${answer.firstName}", "${answer.lastName}", ${role_id}`) (err, res) 
                 if (err) throw err;
                 // Log all results of the SELECT statement
                 console.log(`${answer.firstName} ${answer.lastName}  has been added to the team!`);
