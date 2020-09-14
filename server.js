@@ -140,6 +140,7 @@ const allEmployees = () => {
                 // Log all results of the SELECT statement
                 console.log(`${answer.firstName} ${answer.lastName}  has been added to the team!`);
             console.log("");
+            runSearchPrompt();
             });
         });
       });
