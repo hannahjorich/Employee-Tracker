@@ -7,7 +7,7 @@ USE employee_trackerDB;
 
  CREATE TABLE department (
   id INT NOT NULL AUTO_INCREMENT,
-  dept_name VARCHAR(100) NOT NULL,
+  department_name VARCHAR(100) NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -24,6 +24,5 @@ CREATE TABLE employee (
   first_name VARCHAR(100) NOT NULL,
   last_name VARCHAR(100) NOT NULL,
   role_id INT default 0,
-  manager_id INT default 0,
   PRIMARY KEY (id)
 );
