@@ -135,7 +135,7 @@ const allEmployees = () => {
                 name: "managerID"
               }
         ]).then(function (answer)  {
-            connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.eeFirstName, answer.eeLastName, answer.roleID, answer.managerID], function(err, res) {
+            connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.firstName, answer.lastName, answer.roleID, answer.managerID], function(err, res) {
                 if (err) throw err;
                 // Log all results of the SELECT statement
                 console.log(`${answer.firstName} ${answer.lastName}  has been added to the team!`);
@@ -144,4 +144,24 @@ const allEmployees = () => {
             });
         });
       });
+  }
+
+  const addDepartment = () => {
+    inquirer.prompt(
+      {
+        type: "input",
+        name: "departmentName",
+        message: "What is the new department name?"
+      }
+  
+    ).then((answer) => {
+      let department_name = answer.departmentName
+      connection.query(`INSERT into department (department_name) VALUES ("${department_name}") `, (err, res) => {
+        if (err) throw err;
+        // Log all results of the SELECT statement
+        console.log(`${department_name} has been added to departments!`);
+      })
+      console.log("")
+      runSearchPrompt();
+    })
   }
