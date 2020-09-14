@@ -62,9 +62,9 @@ function runSearchPrompt() {
         case "Add Role":
           addRole();
           break;
-          case "Update employee role":
-            updateRole();
-            break;
+        case "Update employee role":
+          updateRole();
+          break;
         case "exit":
           connection.end();
           break;
@@ -180,12 +180,9 @@ const addDepartment = () => {
 };
 
 const addRole = () => {
-    // this pulls from the department 
   connection.query("SELECT * FROM department", (err, res) => {
     if (err) throw err;
- 
-    return inquirer
-      .prompt([
+    return inquirer.prompt([
         {
           type: "input",
           name: "role",
@@ -203,9 +200,10 @@ const addRole = () => {
         },
       ])
       .then(function (answer) {
-        connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",[answer.role, answer.salary, answer.departmentId], function (err, res) {
+        connection.query(
+          "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",[answer.role, answer.salary, answer.departmentId],function (err, res) {
             if (err) throw err;
-            console.log(`You have add "${answer.role}" successfully`);
+            console.log(`You have successfully added "${answer.role}"`);
             console.log("");
             runSearchPrompt();
           }
@@ -213,69 +211,68 @@ const addRole = () => {
       });
   });
 };
-
 const updateRole = () => {
   //pull all the employees first
   connection.query("SELECT * FROM employee", (err, res) => {
     if (err) throw err;
-
-    //display prompt
-    inquirer
-      .prompt([
-        {
-          type: "list",
-          name: "name",
-          message: "Whose role are you updating?",
-          choices: () => {
-            let employeeArray = [];
-            //push employees into an array 
-            for (let i = 0; i < res.length; i++) {
-              employeeArray.push(res[i].first_name + " " + res[i].last_name);
-            }
-            return employeeArray;
+    return (
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "name",
+            message: "Whose role are you updating?",
+            choices: () => {
+              let employeeArray = [];
+              //push employees into an array
+              for (let i = 0; i < res.length; i++) {
+                employeeArray.push(res[i].first_name + " " + res[i].last_name);
+              }
+              return employeeArray;
+            },
           },
-        },
-      ])
-      // handle answer
-      .then((answer) => {
-        //split the name up for first and last 
-        let fullName = answer.name;
-        console.log(fullName);
-        let splitName = fullName.split(" ");
+        ])
+        // handle answer
+        .then((answer) => {
+          //split the name up for first and last
+          let fullName = answer.name;
+          console.log(fullName);
+          let splitName = fullName.split(" ");
 
-        connection.query("SELECT * FROM roles", (err, res) => {
-          inquirer
-            .prompt([
-              {
-                type: "list",
-                name: "role",
-                message: "What role would you like to assign?",
-                choices: () => {
-                  let roleArray = [];
-                  for (let i = 0; i < res.length; i++) {
-                    roleArray.push(res[i].title + " | " + res[i].id);
-                  }
-                  console.log();
-                  return roleArray;
+          connection.query("SELECT * FROM roles", (err, res) => {
+            inquirer
+              .prompt([
+                {
+                  type: "list",
+                  name: "role",
+                  message: "What role would you like to assign?",
+                  choices: () => {
+                    let roleArray = [];
+                    for (let i = 0; i < res.length; i++) {
+                      roleArray.push(res[i].title + " | " + res[i].id);
+                    }
+                    console.log();
+                    return roleArray;
+                  },
                 },
-              },
-            ])
-            .then((choice) => {
-                // this splits the employee and updated assigned role 
-              let roleID = choice.role.split("|")[1];
-              connection.query(
-                `UPDATE employee SET role_id = "${roleID}" WHERE first_name = "${splitName[0]}" and last_name = "${splitName[1]}"`,
+              ])
+              .then((choice) => {
+                // this splits the employee and updated assigned role
+                let roleID = choice.role.split("|")[1];
+                connection.query(
+                  `UPDATE employee SET role_id = "${roleID}" WHERE first_name = "${splitName[0]}" and last_name = "${splitName[1]}"`,
 
-                (err) => {
-                  if (err) throw err;
-                  console.log("added successfully");
-                  // RETURN TO START
-                  console.log("");
-                  runSearchPrompt();
-                }
-              );
-            });
-        });
-      });
+                  (err) => {
+                    if (err) throw err;
+                    console.log("added successfully");
+                    // RETURN TO START
+                    console.log("");
+                    runSearchPrompt();
+                  }
+                );
+              });
+          });
+        })
+    );
   });
 };
